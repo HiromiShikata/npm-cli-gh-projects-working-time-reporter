@@ -12,7 +12,6 @@ interface Cookie {
   sameSite?: 'lax' | 'strict' | 'none';
 }
 
-
 export class BaseGitHubRepository {
   constructor(
     readonly jsonFilePath: string = './tmp/github.com.cookies.json',
@@ -38,10 +37,13 @@ export class BaseGitHubRepository {
   protected createHeader = async (): Promise<object> => {
     const cookie = await this.createCookieStringFromFile();
     const headers = {
-      'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-      'accept-language': 'en-US,en;q=0.9,es-MX;q=0.8,es;q=0.7,ja-JP;q=0.6,ja;q=0.5',
+      accept:
+        'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+      'accept-language':
+        'en-US,en;q=0.9,es-MX;q=0.8,es;q=0.7,ja-JP;q=0.6,ja;q=0.5',
       'cache-control': 'max-age=0',
-      'sec-ch-ua': '"Google Chrome";v="123", "Not:A-Brand";v="8", "Chromium";v="123"',
+      'sec-ch-ua':
+        '"Google Chrome";v="123", "Not:A-Brand";v="8", "Chromium";v="123"',
       'sec-ch-ua-mobile': '?0',
       'sec-ch-ua-platform': '"Linux"',
       'sec-fetch-dest': 'document',
@@ -49,17 +51,18 @@ export class BaseGitHubRepository {
       'sec-fetch-site': 'same-origin',
       'sec-fetch-user': '?1',
       'upgrade-insecure-requests': '1',
-      'Referer': 'https://github.com/orgs/community/discussions/30979',
+      Referer: 'https://github.com/orgs/community/discussions/30979',
       'Referrer-Policy': 'no-referrer-when-downgrade',
     };
     return {
       ...headers,
-      'cookie': cookie,
+      cookie: cookie,
     };
-
   };
   protected createCookieStringFromFile = async (): Promise<string> => {
-    const data = await fsPromises.readFile(this.jsonFilePath, { encoding: 'utf-8' });
+    const data = await fsPromises.readFile(this.jsonFilePath, {
+      encoding: 'utf-8',
+    });
     const cookiesData: unknown = JSON.parse(data);
     return this.generateCookieHeaderFromJson(cookiesData);
   };
@@ -85,17 +88,22 @@ export class BaseGitHubRepository {
     );
   };
 
-  protected generateCookieHeaderFromJson = async (cookieData: unknown): Promise<string> => {
+  protected generateCookieHeaderFromJson = async (
+    cookieData: unknown,
+  ): Promise<string> => {
     if (!Array.isArray(cookieData)) {
       throw new Error('Invalid cookie array');
     }
 
     const cookies: Cookie[] = cookieData.map((cookieOrig: object) => {
-      if (typeof cookieOrig !== 'object'
-        || !('sameSite' in cookieOrig)
-        || typeof cookieOrig.sameSite !== 'string'
+      if (
+        typeof cookieOrig !== 'object' ||
+        !('sameSite' in cookieOrig) ||
+        typeof cookieOrig.sameSite !== 'string'
       ) {
-        throw new Error(`Invalid cookie properties: ${JSON.stringify(cookieOrig)}`);
+        throw new Error(
+          `Invalid cookie properties: ${JSON.stringify(cookieOrig)}`,
+        );
       }
       const cookie = {
         ...cookieOrig,
@@ -107,14 +115,18 @@ export class BaseGitHubRepository {
       }
       return cookie;
     });
-    const cookieHeader = cookies.map(cookie => serialize(cookie.name, cookie.value, {
-      domain: cookie.domain,
-      path: cookie.path,
-      expires: cookie.expires ? new Date(cookie.expires * 1000) : undefined,
-      httpOnly: cookie.httpOnly,
-      secure: cookie.secure,
-      sameSite: cookie.sameSite,
-    })).join('; ');
+    const cookieHeader = cookies
+      .map((cookie) =>
+        serialize(cookie.name, cookie.value, {
+          domain: cookie.domain,
+          path: cookie.path,
+          expires: cookie.expires ? new Date(cookie.expires * 1000) : undefined,
+          httpOnly: cookie.httpOnly,
+          secure: cookie.secure,
+          sameSite: cookie.sameSite,
+        }),
+      )
+      .join('; ');
     return cookieHeader;
   };
 }

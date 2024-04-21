@@ -14,7 +14,7 @@ describe('BaseGitHubRepository', () => {
   }
   const baseGitHubRepository: TestGitHubRepository = new TestGitHubRepository();
   beforeAll(() => {
-    resetAllMocks()
+    resetAllMocks();
     const cookies = [
       {
         name: 'name',
@@ -28,22 +28,38 @@ describe('BaseGitHubRepository', () => {
       },
     ];
     fs.writeFileSync(jsonFilePath, JSON.stringify(cookies));
-  })
+  });
   afterAll(() => {
     fs.rmSync(jsonFilePath);
   });
 
+  describe('extractIssueFromUrl', () => {
+    it('should return issue number', () => {
+      const extracted = baseGitHubRepository.extractIssueFromUrlPublic(
+        'https://github.com/HiromiShikata/test-repository/issues/38',
+      );
+      expect(extracted).toEqual({
+        owner: 'HiromiShikata',
+        repo: 'test-repository',
+        issueNumber: 38,
+      });
+    });
+  });
+
   describe('createHeader', () => {
     it('should return headers with cookie', async () => {
-      const headers = await baseGitHubRepository.createHeaderPublic()
+      const headers = await baseGitHubRepository.createHeaderPublic();
       expect(headers).toHaveProperty('cookie');
     });
   });
 
   describe('createCookieStringFromFile', () => {
     it('should return cookie string', async () => {
-      const cookie = await baseGitHubRepository.createCookieStringFromFilePublic();
-      expect(cookie).toEqual('name=value; Domain=domain; Path=path; Expires=Thu, 01 Jan 1970 00:00:01 GMT; HttpOnly; Secure; SameSite=Lax')
+      const cookie =
+        await baseGitHubRepository.createCookieStringFromFilePublic();
+      expect(cookie).toEqual(
+        'name=value; Domain=domain; Path=path; Expires=Thu, 01 Jan 1970 00:00:01 GMT; HttpOnly; Secure; SameSite=Lax',
+      );
     });
   });
 
@@ -75,4 +91,4 @@ describe('BaseGitHubRepository', () => {
       expect(baseGitHubRepository.isCookiePublic(cookie)).toBe(false);
     });
   });
-})
+});

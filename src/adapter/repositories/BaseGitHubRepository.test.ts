@@ -5,11 +5,12 @@ describe('BaseGitHubRepository', () => {
   const jsonFilePath = './tmp/test.github.com.cookies.json';
   class TestGitHubRepository extends BaseGitHubRepository {
     constructor() {
-      super(jsonFilePath)
+      super(jsonFilePath, process.env.TEST_BOT_GH_TOKEN);
     }
-    createHeaderPublic = this.createHeader
-    createCookieStringFromFilePublic = this.createCookieStringFromFile
-    isCookiePublic = this.isCookie
+    extractIssueFromUrlPublic = this.extractIssueFromUrl;
+    createHeaderPublic = this.createHeader;
+    createCookieStringFromFilePublic = this.createCookieStringFromFile;
+    isCookiePublic = this.isCookie;
   }
   const baseGitHubRepository: TestGitHubRepository = new TestGitHubRepository();
   beforeAll(() => {

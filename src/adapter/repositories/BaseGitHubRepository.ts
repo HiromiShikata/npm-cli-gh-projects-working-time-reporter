@@ -15,9 +15,25 @@ interface Cookie {
 
 export class BaseGitHubRepository {
   constructor(
-    readonly jsonFilePath: string  = './tmp/github.com.cookies.json'
-  ) {
-  }
+    readonly jsonFilePath: string = './tmp/github.com.cookies.json',
+    readonly ghToken: string = process.env.GH_TOKEN || 'dummy',
+  ) {}
+  protected extractIssueFromUrl = (
+    issueUrl: string,
+  ): { owner: string; repo: string; issueNumber: number } => {
+    const match = issueUrl.match(
+      /https:\/\/github.com\/([^/]+)\/([^/]+)\/issues\/(\d+)/,
+    );
+    if (!match) {
+      throw new Error(`Invalid issue URL: ${issueUrl}`);
+    }
+    const [, owner, repo, issueNumberStr] = match;
+    const issueNumber = parseInt(issueNumberStr, 10);
+    if (isNaN(issueNumber)) {
+      throw new Error(`Invalid issue number: ${issueNumberStr}`);
+    }
+    return { owner, repo, issueNumber };
+  };
 
   protected createHeader = async (): Promise<object> => {
     const cookie = await this.createCookieStringFromFile();

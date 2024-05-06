@@ -26,6 +26,9 @@ jobs:
       - run: git config --global user.email "gh-actions"
       - run: git config --global user.name "gh-actions"
 
-      - run: npx semantic-release
+      - run: |
+          npx semantic-release --no-ci
+          git push --force origin main
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}

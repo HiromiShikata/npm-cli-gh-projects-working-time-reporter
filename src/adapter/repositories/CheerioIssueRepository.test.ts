@@ -12,7 +12,10 @@ describe('CheerioIssueRepository', () => {
     getProjectFromCheerioObjectPublic = this.getProjectFromCheerioObject;
   }
 
-  const repository = new CheerioIssueRepositoryPublic();
+  const repository = new CheerioIssueRepositoryPublic(
+    './tmp/test.github.com.cookies.json',
+    process.env.TEST_BOT_GH_TOKEN,
+  );
 
   describe('getIssue', () => {
     it('should return issue object', async () => {

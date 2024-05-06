@@ -90,7 +90,7 @@ export class CheerioIssueRepository extends BaseGitHubRepository {
       }
       const time = $(timeline).find('relative-time').attr('datetime');
       if (!time) {
-        console.log(`time is not found in ${issueUrl} ${author} ${$.html()}`);
+        console.log(`time is not found in ${issueUrl} ${author}, It may PR.`);
         continue;
       }
       const eventText = $(timeline).find('strong');

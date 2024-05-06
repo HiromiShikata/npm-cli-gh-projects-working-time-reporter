@@ -2,8 +2,8 @@ name: Publish
 
 on:
   push:
-    branches:
-      - main
+#    branches:
+#      - main
 
 jobs:
   publish:
@@ -27,7 +27,7 @@ jobs:
       - run: git config --global user.name "gh-actions"
 
       - run: |
-          npx semantic-release --no-ci
+          npx semantic-release
           git push --force origin main
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

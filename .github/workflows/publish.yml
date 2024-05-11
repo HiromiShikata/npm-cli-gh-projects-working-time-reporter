@@ -23,24 +23,18 @@ jobs:
         with:
           token: ${{ steps.app-token.outputs.token }}
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build package
-        run: npm run build
-
+      - run: npm ci
+      - run: npm run build
       - run: git config --global user.email "gh-actions"
       - run: git config --global user.name "gh-actions"
 
       - run: npx semantic-release
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          GITHUB_TOKEN: ${{ env.PJ_GITHUB_TOKEN }}
       - run: |
           git status
           git add -A

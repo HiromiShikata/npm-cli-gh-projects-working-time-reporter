@@ -28,6 +28,7 @@ jobs:
 
       - run: |
           npx semantic-release
+          git status
           git push --force origin main
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

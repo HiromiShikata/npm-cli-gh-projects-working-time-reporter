@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+env:
+  PJ_GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -26,10 +29,12 @@ jobs:
       - run: git config --global user.email "gh-actions"
       - run: git config --global user.name "gh-actions"
 
-      - run: |
-          npx semantic-release
-          git status
-          git push --force origin main
+      - run: npx semantic-release
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ env.PJ_GITHUB_TOKEN }}
+      - run: |
+          git status
+          git add -A
+          git commit -m "autogen: release [skip ci]"
+          git push --force origin main

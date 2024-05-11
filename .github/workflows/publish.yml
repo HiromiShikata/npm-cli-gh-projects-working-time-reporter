@@ -10,7 +10,6 @@ env:
   RELEASE_APP_PRIVATE_KEY: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
   PJ_GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
-
 jobs:
   publish:
     runs-on: ubuntu-latest

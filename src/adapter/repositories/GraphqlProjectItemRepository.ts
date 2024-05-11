@@ -75,7 +75,8 @@ export class GraphqlProjectItemRepository extends BaseGitHubRepository {
       nameWithOwner: string;
       number: number;
       title: string;
-      state: string;
+      state: 'OPEN' | 'CLOSED' | 'MERGED';
+      url: string;
     }[]
   > => {
     const graphqlQueryString = `
@@ -95,6 +96,7 @@ export class GraphqlProjectItemRepository extends BaseGitHubRepository {
               title
               state
               number
+              url
               repository {
                 nameWithOwner
               }
@@ -104,6 +106,7 @@ export class GraphqlProjectItemRepository extends BaseGitHubRepository {
               title
               state
               number
+              url
               repository {
                 nameWithOwner
               }
@@ -132,6 +135,7 @@ export class GraphqlProjectItemRepository extends BaseGitHubRepository {
               number: number;
               title: string;
               state: string;
+              url: string;
             };
           }[];
         };
@@ -159,6 +163,7 @@ export class GraphqlProjectItemRepository extends BaseGitHubRepository {
                   number: number;
                   title: string;
                   state: string;
+                  url: string;
                 };
               }[];
             };
@@ -179,7 +184,8 @@ export class GraphqlProjectItemRepository extends BaseGitHubRepository {
       nameWithOwner: string;
       number: number;
       title: string;
-      state: string;
+      state: 'OPEN' | 'CLOSED' | 'MERGED';
+      url: string;
     }[] = [];
     let after: string | null = null;
     let totalCount = 1;
@@ -192,6 +198,7 @@ export class GraphqlProjectItemRepository extends BaseGitHubRepository {
           number: number;
           title: string;
           state: string;
+          url: string;
         };
       }[] = data.node.items.nodes;
       projectItems
@@ -201,7 +208,15 @@ export class GraphqlProjectItemRepository extends BaseGitHubRepository {
             nameWithOwner: item.content.repository.nameWithOwner,
             number: item.content.number,
             title: item.content.title,
-            state: item.content.state,
+            state:
+              item.content.state === 'MERGED'
+                ? 'MERGED'
+                : item.content.state === 'CLOSED'
+                  ? 'CLOSED'
+                  : item.content.state === 'OPEN'
+                    ? 'OPEN'
+                    : 'OPEN',
+            url: item.content.url,
           });
         });
       totalCount = data.node.items.totalCount;

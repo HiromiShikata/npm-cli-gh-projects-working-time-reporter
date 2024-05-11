@@ -14,4 +14,16 @@ describe('RestIssueRepository', () => {
       );
     });
   });
+  describe('createNewIssue', () => {
+    it('should create a new issue', async () => {
+      await restIssueRepository.createNewIssue(
+        'HiromiShikata',
+        'test-repository',
+        'test issue',
+        'test body',
+        ['HiromiShikata'],
+        ['test'],
+      );
+    });
+  });
 });

@@ -98,18 +98,15 @@ export class BaseGitHubRepository {
     }
 
     const cookies: Cookie[] = cookieData.map((cookieOrig: object) => {
-      if (
+      const sameSite =
         typeof cookieOrig !== 'object' ||
         !('sameSite' in cookieOrig) ||
         typeof cookieOrig.sameSite !== 'string'
-      ) {
-        throw new Error(
-          `Invalid cookie properties: ${JSON.stringify(cookieOrig)}`,
-        );
-      }
+          ? 'none'
+          : cookieOrig.sameSite.toLowerCase();
       const cookie = {
         ...cookieOrig,
-        sameSite: cookieOrig.sameSite.toLowerCase(),
+        sameSite,
       };
 
       if (!this.isCookie(cookie)) {

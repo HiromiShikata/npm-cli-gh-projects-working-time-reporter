@@ -29,7 +29,9 @@ export class BaseGitHubRepository {
     const [, owner, repo, _pullOrIssue, issueNumberStr] = match;
     const issueNumber = parseInt(issueNumberStr, 10);
     if (isNaN(issueNumber)) {
-      throw new Error(`Invalid issue number: ${issueNumberStr}`);
+      throw new Error(
+        `Invalid issue number: ${issueNumberStr}. URL: ${issueUrl}`,
+      );
     }
     return { owner, repo, issueNumber };
   };

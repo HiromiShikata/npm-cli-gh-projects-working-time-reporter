@@ -21,12 +21,12 @@ export class BaseGitHubRepository {
     issueUrl: string,
   ): { owner: string; repo: string; issueNumber: number } => {
     const match = issueUrl.match(
-      /https:\/\/github.com\/([^/]+)\/([^/]+)\/issues\/(\d+)/,
+      /https:\/\/github.com\/([^/]+)\/([^/]+)\/(issues|pull)\/(\d+)/,
     );
     if (!match) {
       throw new Error(`Invalid issue URL: ${issueUrl}`);
     }
-    const [, owner, repo, issueNumberStr] = match;
+    const [, owner, repo, _pullOrIssue, issueNumberStr] = match;
     const issueNumber = parseInt(issueNumberStr, 10);
     if (isNaN(issueNumber)) {
       throw new Error(`Invalid issue number: ${issueNumberStr}`);

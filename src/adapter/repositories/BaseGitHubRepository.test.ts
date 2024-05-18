@@ -42,6 +42,7 @@ describe('BaseGitHubRepository', () => {
         owner: 'HiromiShikata',
         repo: 'test-repository',
         issueNumber: 38,
+        isIssue: true,
       });
     });
   });

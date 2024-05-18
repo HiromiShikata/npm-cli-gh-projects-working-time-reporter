@@ -8,14 +8,14 @@ class BaseGitHubRepository {
         this.jsonFilePath = jsonFilePath;
         this.ghToken = ghToken;
         this.extractIssueFromUrl = (issueUrl) => {
-            const match = issueUrl.match(/https:\/\/github.com\/([^/]+)\/([^/]+)\/issues\/(\d+)/);
+            const match = issueUrl.match(/https:\/\/github.com\/([^/]+)\/([^/]+)\/(issues|pull)\/(\d+)/);
             if (!match) {
                 throw new Error(`Invalid issue URL: ${issueUrl}`);
             }
-            const [, owner, repo, issueNumberStr] = match;
+            const [, owner, repo, _pullOrIssue, issueNumberStr] = match;
             const issueNumber = parseInt(issueNumberStr, 10);
             if (isNaN(issueNumber)) {
-                throw new Error(`Invalid issue number: ${issueNumberStr}`);
+                throw new Error(`Invalid issue number: ${issueNumberStr}. URL: ${issueUrl}`);
             }
             return { owner, repo, issueNumber };
         };
@@ -72,14 +72,14 @@ class BaseGitHubRepository {
                 throw new Error('Invalid cookie array');
             }
             const cookies = cookieData.map((cookieOrig) => {
-                if (typeof cookieOrig !== 'object' ||
+                const sameSite = typeof cookieOrig !== 'object' ||
                     !('sameSite' in cookieOrig) ||
-                    typeof cookieOrig.sameSite !== 'string') {
-                    throw new Error(`Invalid cookie properties: ${JSON.stringify(cookieOrig)}`);
-                }
+                    typeof cookieOrig.sameSite !== 'string'
+                    ? 'none'
+                    : cookieOrig.sameSite.toLowerCase();
                 const cookie = {
                     ...cookieOrig,
-                    sameSite: cookieOrig.sameSite.toLowerCase(),
+                    sameSite,
                 };
                 if (!this.isCookie(cookie)) {
                     throw new Error(`Invalid cookie properties: ${JSON.stringify(cookie)}`);

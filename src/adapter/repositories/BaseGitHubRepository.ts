@@ -19,19 +19,21 @@ export class BaseGitHubRepository {
   ) {}
   protected extractIssueFromUrl = (
     issueUrl: string,
-  ): { owner: string; repo: string; issueNumber: number } => {
+  ): { owner: string; repo: string; issueNumber: number; isIssue: boolean } => {
     const match = issueUrl.match(
-      /https:\/\/github.com\/([^/]+)\/([^/]+)\/issues\/(\d+)/,
+      /https:\/\/github.com\/([^/]+)\/([^/]+)\/(issues|pull)\/(\d+)/,
     );
     if (!match) {
       throw new Error(`Invalid issue URL: ${issueUrl}`);
     }
-    const [, owner, repo, issueNumberStr] = match;
+    const [, owner, repo, pullOrIssue, issueNumberStr] = match;
     const issueNumber = parseInt(issueNumberStr, 10);
     if (isNaN(issueNumber)) {
-      throw new Error(`Invalid issue number: ${issueNumberStr}`);
+      throw new Error(
+        `Invalid issue number: ${issueNumberStr}. URL: ${issueUrl}`,
+      );
     }
-    return { owner, repo, issueNumber };
+    return { owner, repo, issueNumber, isIssue: pullOrIssue === 'issues' };
   };
 
   protected createHeader = async (): Promise<object> => {
@@ -96,18 +98,15 @@ export class BaseGitHubRepository {
     }
 
     const cookies: Cookie[] = cookieData.map((cookieOrig: object) => {
-      if (
+      const sameSite =
         typeof cookieOrig !== 'object' ||
         !('sameSite' in cookieOrig) ||
         typeof cookieOrig.sameSite !== 'string'
-      ) {
-        throw new Error(
-          `Invalid cookie properties: ${JSON.stringify(cookieOrig)}`,
-        );
-      }
+          ? 'none'
+          : cookieOrig.sameSite.toLowerCase();
       const cookie = {
         ...cookieOrig,
-        sameSite: cookieOrig.sameSite.toLowerCase(),
+        sameSite,
       };
 
       if (!this.isCookie(cookie)) {

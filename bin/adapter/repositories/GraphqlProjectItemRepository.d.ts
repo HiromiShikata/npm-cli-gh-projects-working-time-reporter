@@ -5,7 +5,7 @@ export declare class GraphqlProjectItemRepository extends BaseGitHubRepository {
         nameWithOwner: string;
         number: number;
         title: string;
-        state: 'OPEN' | 'CLOSED' | 'MERGED';
+        state: "OPEN" | "CLOSED" | "MERGED";
         url: string;
     }[]>;
     getProjectItemFieldsFromIssueUrl: (issueUrl: string) => Promise<{

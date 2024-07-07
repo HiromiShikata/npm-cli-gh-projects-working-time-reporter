@@ -3,8 +3,8 @@ export declare class ApiV3IssueRepository extends BaseGitHubRepository {
     searchIssue: (query: {
         owner: string;
         repositoryName: string;
-        type?: 'issue' | 'pr';
-        state?: 'open' | 'closed' | 'all';
+        type?: "issue" | "pr";
+        state?: "open" | "closed" | "all";
         title?: string;
         createdFrom?: string;
         assignee?: string;

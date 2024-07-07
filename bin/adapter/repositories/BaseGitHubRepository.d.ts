@@ -16,6 +16,7 @@ export declare class BaseGitHubRepository {
         owner: string;
         repo: string;
         issueNumber: number;
+        isIssue: boolean;
     };
     protected createHeader: () => Promise<object>;
     protected createCookieStringFromFile: () => Promise<string>;

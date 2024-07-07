@@ -12,12 +12,12 @@ class BaseGitHubRepository {
             if (!match) {
                 throw new Error(`Invalid issue URL: ${issueUrl}`);
             }
-            const [, owner, repo, _pullOrIssue, issueNumberStr] = match;
+            const [, owner, repo, pullOrIssue, issueNumberStr] = match;
             const issueNumber = parseInt(issueNumberStr, 10);
             if (isNaN(issueNumber)) {
                 throw new Error(`Invalid issue number: ${issueNumberStr}. URL: ${issueUrl}`);
             }
-            return { owner, repo, issueNumber };
+            return { owner, repo, issueNumber, isIssue: pullOrIssue === 'issues' };
         };
         this.createHeader = async () => {
             const cookie = await this.createCookieStringFromFile();

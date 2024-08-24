@@ -133,7 +133,7 @@ export class CheerioIssueRepository extends BaseGitHubRepository {
         };
         continue;
       }
-      if (currentInProgress != undefined){
+      if (currentInProgress != undefined) {
         report.push({
           ...currentInProgress,
           end: timeline.time,

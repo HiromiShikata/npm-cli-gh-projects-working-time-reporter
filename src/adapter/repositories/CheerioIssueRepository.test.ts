@@ -148,32 +148,42 @@ describe('CheerioIssueRepository', () => {
     describe('should count `in progress` if from is not `in progress` but input it to `in progress` before', () => {
       describe(`fromToList | expectedStartEndList`, () => {
         test.each`
-      caseName | fromToList | expectedStartEndList
-      ${'Normal'} | ${[['Todo', 'In Progress', 'user0'],['In Progress', 'Todo', 'user0']]} | ${[['2000-01-01T00:00:00Z', '2000-01-01T00:01:00Z', 'user0']]}
-      ${'Closed by other user'} | ${[['Todo', 'In Progress', 'user0'],['In Progress', 'Todo', 'user1']]} | ${[['2000-01-01T00:00:00Z', '2000-01-01T00:01:00Z', 'user0']]}
-      ${'No record moved from In Progress'} | ${[['Todo', 'In Progress', 'user0'],['In Review', 'Todo', 'user0']]} | ${[['2000-01-01T00:00:00Z', '2000-01-01T00:01:00Z', 'user0']]}
-      ${'No record moved from In Progress and other user continued'} | ${[['Todo', 'In Progress', 'user0'],['Todo', 'In Progress','user1'], ["In Review", "Todo", 'user1']]} | ${[['2000-01-01T00:00:00Z', '2000-01-01T00:01:00Z','user0'],['2000-01-01T00:01:00Z', '2000-01-01T00:02:00Z','user1']]}
-      `(`$caseName, $fromToList, $expectedStartEndList`, async ({ fromToList, expectedStartEndList }:{
-          fromToList: string[][];
-          expectedStartEndList: string[][];
-        }) => {
-          repository.getStatusTimelineEvents = jest.fn().mockResolvedValue(
-            fromToList.map((fromTo: string[], index) => ({
-              time: `2000-01-01T00:0${index}:00Z`,
-              author: fromTo[2],
-              from: fromTo[0],
-              to: fromTo[1],
-            }))        );
-          const inProgressTimeline = await repository.getInProgressTimeline(issueUrl);
-          expect(inProgressTimeline).toEqual(expectedStartEndList.map((expectedStartEnd) =>{
-            return {
-              author: expectedStartEnd[2],
-              end: expectedStartEnd[1],
-              issueUrl,
-              start: expectedStartEnd[0],
-            }
-          }));
-        });
+          caseName                                                       | fromToList                                                                                              | expectedStartEndList
+          ${'Normal'}                                                    | ${[['Todo', 'In Progress', 'user0'], ['In Progress', 'Todo', 'user0']]}                                 | ${[['2000-01-01T00:00:00Z', '2000-01-01T00:01:00Z', 'user0']]}
+          ${'Closed by other user'}                                      | ${[['Todo', 'In Progress', 'user0'], ['In Progress', 'Todo', 'user1']]}                                 | ${[['2000-01-01T00:00:00Z', '2000-01-01T00:01:00Z', 'user0']]}
+          ${'No record moved from In Progress'}                          | ${[['Todo', 'In Progress', 'user0'], ['In Review', 'Todo', 'user0']]}                                   | ${[['2000-01-01T00:00:00Z', '2000-01-01T00:01:00Z', 'user0']]}
+          ${'No record moved from In Progress and other user continued'} | ${[['Todo', 'In Progress', 'user0'], ['Todo', 'In Progress', 'user1'], ['In Review', 'Todo', 'user1']]} | ${[['2000-01-01T00:00:00Z', '2000-01-01T00:01:00Z', 'user0'], ['2000-01-01T00:01:00Z', '2000-01-01T00:02:00Z', 'user1']]}
+        `(
+          `$caseName, $fromToList, $expectedStartEndList`,
+          async ({
+            fromToList,
+            expectedStartEndList,
+          }: {
+            fromToList: string[][];
+            expectedStartEndList: string[][];
+          }) => {
+            repository.getStatusTimelineEvents = jest.fn().mockResolvedValue(
+              fromToList.map((fromTo: string[], index) => ({
+                time: `2000-01-01T00:0${index}:00Z`,
+                author: fromTo[2],
+                from: fromTo[0],
+                to: fromTo[1],
+              })),
+            );
+            const inProgressTimeline =
+              await repository.getInProgressTimeline(issueUrl);
+            expect(inProgressTimeline).toEqual(
+              expectedStartEndList.map((expectedStartEnd) => {
+                return {
+                  author: expectedStartEnd[2],
+                  end: expectedStartEnd[1],
+                  issueUrl,
+                  start: expectedStartEnd[0],
+                };
+              }),
+            );
+          },
+        );
       });
     });
   });

@@ -31,11 +31,14 @@ jobs:
       - name: Build
         run: npm run build
 
-      - run: mkdir -p tmp && echo '${{ secrets.TEST_BOT_COOKIE }}' > ./tmp/test.github.com.cookies.json
+      - run: mkdir -p tmp && npx -y gh-cookie '${{ secrets.TEST_BOT_GH_ACCOUNT_NAME }}' '${{ secrets.TEST_BOT_GH_ACCOUNT_PASSWORD }}' '${{ secrets.TEST_BOT_GH_AUTHENTICATOR_KEY }}' > ./tmp/test.github.com.cookies.json
       - name: Run tests
         run: npm run test
         env:
           TEST_BOT_GH_TOKEN: ${{ secrets.TEST_BOT_GH_TOKEN }}
+
+
+
 
       - name: Upload test results
         uses: actions/upload-artifact@v4

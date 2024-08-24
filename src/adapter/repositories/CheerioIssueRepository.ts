@@ -108,12 +108,7 @@ export class CheerioIssueRepository extends BaseGitHubRepository {
   getInProgressTimeline = async (
     issueUrl: string,
   ): Promise<IssueInProgressTimeline[]> => {
-    const events = await this.getStatusTimelineEvents(issueUrl);
-    const timelines = events.filter(
-      (event) =>
-        event.from.toLocaleLowerCase().includes('in progress') ||
-        event.to.toLocaleLowerCase().includes('in progress'),
-    );
+    const timelines = await this.getStatusTimelineEvents(issueUrl);
 
     const report: IssueInProgressTimeline[] = [];
     let currentInProgress:
@@ -122,6 +117,11 @@ export class CheerioIssueRepository extends BaseGitHubRepository {
     for (const timeline of timelines) {
       if (timeline.to.toLocaleLowerCase().includes('in progress')) {
         if (currentInProgress !== undefined) {
+          report.push({
+            ...currentInProgress,
+            end: timeline.time,
+          });
+          currentInProgress = undefined;
           console.log(
             `currentInProgress is not undefined. ${JSON.stringify(currentInProgress)}, timeline: ${JSON.stringify(timeline)}`,
           );
@@ -133,13 +133,7 @@ export class CheerioIssueRepository extends BaseGitHubRepository {
         };
         continue;
       }
-      if (timeline.from.toLocaleLowerCase().includes('in progress')) {
-        if (currentInProgress === undefined) {
-          console.log(
-            `currentInProgress is undefined. ${currentInProgress}, timeline: ${JSON.stringify(timeline)}`,
-          );
-          continue;
-        }
+      if (currentInProgress != undefined){
         report.push({
           ...currentInProgress,
           end: timeline.time,

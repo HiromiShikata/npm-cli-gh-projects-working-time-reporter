@@ -37,9 +37,6 @@ jobs:
         env:
           TEST_BOT_GH_TOKEN: ${{ secrets.TEST_BOT_GH_TOKEN }}
 
-
-
-
       - name: Upload test results
         uses: actions/upload-artifact@v4
         with:

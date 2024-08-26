@@ -204,6 +204,9 @@ export class GraphqlProjectItemRepository extends BaseGitHubRepository {
       projectItems
         // .filter(item => item.content.repository !== undefined)
         .forEach((item) => {
+          if (!item || !item.content || !item.content.repository) {
+            return;
+          }
           issues.push({
             nameWithOwner: item.content.repository.nameWithOwner,
             number: item.content.number,

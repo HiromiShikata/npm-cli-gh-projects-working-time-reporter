@@ -114,7 +114,7 @@ describe('CheerioIssueRepository', () => {
     it('should return status timeline events', () => {
       const $ = cheerio.load(issueHtml);
       const statusTimeline =
-        repository.getStatusTimelineEventsFromCheerioObjectPublic($, issueUrl);
+        repository.getStatusTimelineEventsFromCheerioObjectPublic($);
       expect(statusTimeline).toEqual([
         {
           author: 'HiromiShikata',

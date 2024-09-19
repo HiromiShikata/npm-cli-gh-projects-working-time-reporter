@@ -52,7 +52,7 @@ export class CheerioIssueRepository extends BaseGitHubRepository {
     const headers = await this.createHeader();
     const content = await axios.get<string>(issueUrl, { headers });
     const $ = cheerio.load(content.data);
-    return this.getStatusTimelineEventsFromCheerioObject($, issueUrl);
+    return this.getStatusTimelineEventsFromCheerioObject($);
   };
   protected getTitleFromCheerioObject = ($: cheerio.CheerioAPI): string => {
     return $('h1 > bdi').text();
@@ -79,7 +79,6 @@ export class CheerioIssueRepository extends BaseGitHubRepository {
 
   protected getStatusTimelineEventsFromCheerioObject = (
     $: cheerio.CheerioAPI,
-    issueUrl: string,
   ): IssueStatusTimeline[] => {
     const timelines = $('.TimelineItem-body');
     const res: IssueStatusTimeline[] = [];
@@ -90,7 +89,6 @@ export class CheerioIssueRepository extends BaseGitHubRepository {
       }
       const time = $(timeline).find('relative-time').attr('datetime');
       if (!time) {
-        console.log(`time is not found in ${issueUrl} ${author}, It may PR.`);
         continue;
       }
       const eventText = $(timeline).find('strong');
@@ -122,9 +120,6 @@ export class CheerioIssueRepository extends BaseGitHubRepository {
             end: timeline.time,
           });
           currentInProgress = undefined;
-          console.log(
-            `currentInProgress is not undefined. ${JSON.stringify(currentInProgress)}, timeline: ${JSON.stringify(timeline)}`,
-          );
         }
         currentInProgress = {
           issueUrl: issueUrl,

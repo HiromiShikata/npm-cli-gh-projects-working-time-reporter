@@ -1,4 +1,4 @@
-export type WorkInProgressTimeLine = {
+export type TimelineEvent = {
   issueUrl: string;
   startHhmm: string;
   endHhmm: string;

@@ -1,11 +1,11 @@
 import axios from 'axios';
+import { BaseGitHubRepository } from './BaseGitHubRepository';
 
-export class GraphqlProjectRepository {
+export class GraphqlProjectRepository extends BaseGitHubRepository {
   fetchProjectId = async (
     login: string,
     projectNumber: number,
   ): Promise<string> => {
-    const token = process.env.GH_TOKEN;
     const graphqlQuery = {
       query: `query GetProjectID($login: String!, $number: Int!) {
   organization(login: $login) {
@@ -42,7 +42,7 @@ export class GraphqlProjectRepository {
       url: 'https://api.github.com/graphql',
       method: 'post',
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${this.ghToken}`,
         'Content-Type': 'application/json',
       },
       data: JSON.stringify(graphqlQuery),
